@@ -6,18 +6,11 @@ import 'isomorphic-unfetch'
 import clientCredentials from '../credentials/client'
 
 export default class Index extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      user: this.props.user,
-      value: '',
-      messages: this.props.messages
-    }
-
-    // this.addDbListener = this.addDbListener.bind(this)
-    // this.removeDbListener = this.removeDbListener.bind(this)
-    // this.handleChange = this.handleChange.bind(this)
-    // this.handleSubmit = this.handleSubmit.bind(this)
+  state = {
+    user: this.props.user,
+    value: '',
+    messages: this.props.messages,
+    error: null
   }
 
   static async getInitialProps ({ req, query }) {
@@ -61,12 +54,21 @@ export default class Index extends Component {
     })
   }
 
+  handleLogin = () => {
+    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
+  }
+
+  handleLogout = () => {
+    firebase.auth().signOut().catch(function(error) {
+      this.setState({ error: error })
+    });
+  }
+
   addDbListener = () => {
-    var db = firebase.firestore()
+    var db = firebase.firestore();
     // Disable deprecated features
-    db.settings({
-      timestampsInSnapshots: true
-    })
+    db.settings({ timestampsInSnapshots: true });
+
     let unsubscribe = db.collection('messages').onSnapshot(
       querySnapshot => {
         var messages = {}
@@ -78,8 +80,9 @@ export default class Index extends Component {
       error => {
         console.error(error)
       }
-    )
-    this.setState({ unsubscribe })
+    );
+
+    this.setState({ unsubscribe });
   }
 
   removeDbListener = () => {
@@ -110,43 +113,30 @@ export default class Index extends Component {
     this.setState({ value: '' })
   }
 
-  handleLogin = () => {
-    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
-  }
-
-  handleLogout = () => {
-    firebase.auth().signOut()
-  }
-
   render () {
-    const { user, value, messages } = this.state
+    const { user, value, messages, error } = this.state;
 
-    return (
+    const page = ( 
       <div>
-        {user ? (
-          <button onClick={this.handleLogout}>Logout</button>
-        ) : (
-          <button onClick={this.handleLogin}>Login</button>
-        )}
+        {user ? (<button onClick={this.handleLogout}>Logout</button>) : 
+        (<button onClick={this.handleLogin}>Login</button>)}
         {user && (
-          <div>
-            <form onSubmit={this.handleSubmit}>
-              <input
-                type={'text'}
-                onChange={this.handleChange}
-                placeholder={'add message...'}
-                value={value}
-              />
-            </form>
-            <ul>
-              {messages &&
-                Object.keys(messages).map(key => (
-                  <li key={key}>{messages[key].text}</li>
-                ))}
-            </ul>
-          </div>
+        <div>
+          <form onSubmit={this.handleSubmit}>
+            <input type={'text'} onChange={this.handleChange} placeholder={'add message...'} value={value}/>
+          </form>
+          <ul>
+            {messages && Object.keys(messages).map(key => (
+              <li key={key}>{messages[key].text}</li>
+            ))}
+          </ul>
+        </div>
         )}
       </div>
+    );
+
+    return (
+     error == null ? page : error
     )
   }
 }

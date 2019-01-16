@@ -10,9 +10,6 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-// const creds = require('./credentials/server');
-// console.log(creds);
-
 const firebase = admin.initializeApp(
 
   {
@@ -21,8 +18,6 @@ const firebase = admin.initializeApp(
   },
   'server'
 )
-
-console.log("firebase app initialized");
 
 app.prepare().then(() => {
   const server = express()
