@@ -1,9 +1,12 @@
-import React, { Component } from 'react'
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/firestore'
-import 'isomorphic-unfetch'
-import clientCredentials from '../credentials/client'
+import React, { Component } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+import 'isomorphic-unfetch';
+import clientCredentials from '../credentials/client';
+
+// lidiando con contextos -> https://daveceddia.com/usecontext-hook/
+// tutorial de firebase con react -> https://react-firebase-js.com/docs/react-firebase-auth/getting-started#setup
 
 export default class Index extends Component {
   state = {
