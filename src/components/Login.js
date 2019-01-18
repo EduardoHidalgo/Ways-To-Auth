@@ -63,8 +63,8 @@ function Login(props) {
   )
 }
 
-Login.getInitialProps() = async ({ query }) => {
+// Login.getInitialProps() = async ({ query }) => {
 
-};
+// };
 
 export default Login;

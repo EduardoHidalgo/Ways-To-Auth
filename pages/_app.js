@@ -12,7 +12,6 @@ import '../src/bootstrap';
 // --- Post bootstrap -----
 import React from 'react';
 import App, { Container } from 'next/app';
-import Head from 'next/head';
 import { StylesProvider, ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import getPageContext from '../src/getPageContext';

@@ -8,7 +8,6 @@ class MyDocument extends Document {
     return (
       <html lang="en" dir="ltr">
         <Head>
-          <title>Ways to Auth</title>
           {/* <!-- Meta Tags compatibilidad y UX --> */}
           <meta httpEquiv="X-UA-Compatible" content="IE=Edge"/>
           <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
