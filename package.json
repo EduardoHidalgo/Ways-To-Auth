@@ -12,16 +12,12 @@
     "@material-ui/styles": "latest",
     "@zeit/next-css": "^1.0.1",
     "jss": "latest",
-    "body-parser": "^1.17.1",
+    "next": "8.0.0-canary.7",
+    "react": "next",
+    "react-dom": "next",
     "dotenv": "^6.2.0",
-    "express": "^4.14.0",
-    "express-session": "^1.15.2",
     "firebase": "^5.6.0",
     "firebase-admin": "^5.8.2",
-    "isomorphic-unfetch": "2.0.0",
-    "next": "8.0.0-canary.7",
-    "react": "16.7.0-alpha.2",
-    "react-dom": "16.7.0-alpha.2",
-    "session-file-store": "^1.0.0"
+    "isomorphic-unfetch": "2.0.0"
   }
 }

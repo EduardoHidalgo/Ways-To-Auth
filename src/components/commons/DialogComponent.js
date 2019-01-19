@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Typography, Modal, Paper, Avatar, Button } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -40,7 +40,11 @@ function DialogComponent(props) {
     // cierra el componente. se executa desde el componente padre
     // que renderea este componente.
     function handleClose() {
-        props.handleLogin(false);
+        props.handleDialog(false);
+    }
+
+    function handleLogin() {
+        props.handleLogin(true);
     }
 
     return (
@@ -56,7 +60,7 @@ function DialogComponent(props) {
                 <Typography component="h1" variant="h5">
                     Iniciar Sesión
                 </Typography>
-                <Button variant="contained" color="primary" className={classes.button}>
+                <Button variant="contained" color="primary" className={classes.button} onClick={()=>handleLogin()}>
                     INICIAR SESIÓN CON GOOGLE
                 </Button>
             </Paper>

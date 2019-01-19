@@ -8,10 +8,7 @@ class MyDocument extends Document {
     return (
       <html lang="en" dir="ltr">
         <Head>
-          {/* <!-- Meta Tags compatibilidad y UX --> */}
-          <meta httpEquiv="X-UA-Compatible" content="IE=Edge"/>
-          <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-          <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
+          <meta charSet="utf-8" />
           {/* Use minimum-scale=1 to enable GPU rasterization */}
           <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"/>
         </Head>
