@@ -119,11 +119,6 @@ export default class Index extends Component {
     event.preventDefault()
     var db = firebase.firestore()
 
-    // Disable deprecated features
-    db.settings({
-      timestampsInSnapshots: true
-    });
-
     const date = new Date().getTime()
     db.collection('messages')
       .doc(`${date}`)
