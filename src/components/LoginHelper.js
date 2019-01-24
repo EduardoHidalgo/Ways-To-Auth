@@ -1,10 +1,10 @@
 import '../bootstrap';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import 'firebase/firestore';
+import 'firebase/database';
 import 'isomorphic-unfetch';
 import clientCredentials from '../credentials/client';
-import { Component, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 // lidiando con contextos -> https://daveceddia.com/usecontext-hook/
 // tutorial de firebase con react -> https://react-firebase-js.com/docs/react-firebase-auth/getting-started#setup
@@ -13,118 +13,121 @@ import { Component, useState, useEffect } from 'react';
 
 function LoginHelper(props) {
     const [user, setUser] = useState(props.user);
-    const [unsubscribe, setUnsubscribe] = useState(null);
     const [error, setError] = useState(null);
-    // data del usuario
-    const [name, setName] = useState(null);
     const [uid, setUid] = useState(null);
-
-    //data
     const [messages, setMessages] = useState(props.messages);
     const [value, setValue] = useState('');
 
     useEffect(() => {
-        if (firebase)
+        // si no existen instancias de firebase, crea una.
+        if (!firebase.apps.length)
             firebase.initializeApp(clientCredentials);
 
-        if (user) { addDbListener() }
+        // en caso que ya exista un usuario logeado, directamente procede a
+        // descargar el contenido.
+        if(user) {
+            getMessages();
+        }
 
-        firebase.auth().onAuthStateChanged(firebaseUser => { 
+        // core de la autenticación. promesa que revisa el estado de la autenticación en 
+        // caso que detecte en la caché la sesión del usuario.
+        firebase.auth().onAuthStateChanged((firebaseUser) => {
+            //valida el token nuevamente en caso de que la sesión exista.
             if (firebaseUser) {
                 setUser(firebaseUser);
-
                 return firebaseUser.getIdToken()
-                .then(token => {
-                    return fetch('http://localhost:3001/api/login', {
+                .then((token) => {
+                    return fetch('http://localhost:8080/api/login', {
                         method: 'POST',
                         headers: new Headers({ 'Content-Type': 'application/json' }),
                         credentials: 'same-origin',
                         body: JSON.stringify({ token })
                     })
                 })
-                .then(res => addDbListener())
+                .then(() => {
+                    getMessages();
+                })
                 .catch(function(error) {
                     console.log('error!');
                     console.log(error);
                 });
             } else {
-                setUser(null);
-                fetch('http://localhost:3001/api/logout', {
+                fetch('http://localhost:8080/api/logout', {
                     method: 'POST',
                     credentials: 'same-origin'
-                }).then(() => removeDbListener())
+                })
             }
         });
     }, []);
 
-    function addDbListener() {
-        var db = firebase.firestore();
-    
-        let unsubscribe = db.collection('messages').onSnapshot(
-          querySnapshot => {
-            var messages = {}
-            querySnapshot.forEach(function (doc) {
-              messages[doc.id] = doc.data()
-            })
+    // Hace un llamado a la API para obtener todos los mensajes que
+    // le pertenecen al usuario.
+    function getMessages() {
+        const url = 'http://localhost:8080/api/messages?uid=' + 
+            firebase.auth().currentUser.uid;
 
-            if (messages) {
-                setMessages(messages);
-            }
-          },
-          error => {
-            console.error(error);
-          }
-        );
-    
-        setUnsubscribe({ unsubscribe });
+        fetch(url, {
+            method: 'GET',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            credentials: 'same-origin'
+        })
+        .then(res => {
+            return res.json();
+        })
+        .then(res => {
+            setMessages(res);
+        });
     }
 
-    function removeDbListener() {
-        if (unsubscribe)
-            unsubscribe();
-    }
+    // realiza la autenticación del usuario por el método de Google. Exige
+    // crear las credenciales del usuario y añadirlas a la db de auth.
+    function LoginWithGoogle() {
+        // useLogin(App).then( function(result) {
+        //     setName(result.name);
+        //     setUid(result.uid);
+        // });
 
-    function handleLogin() {
         firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
         .then(function(result) {
-            setName(result.user.displayName);
             setUid(result.user.uid);
         });
     }
 
+    // cierra la sesión del usuario y limpia el usuario y los parámetros.
     function handleLogout() {
         firebase.auth().signOut()
+        .then(function() { console.log('logout by client successfull')})
         .catch(function(error) {
             console.log(error);
             setError(error);
         });
+
+        setUser(null);
     }
 
     function handleChange(e) { setValue(e.target.value) }
 
+    // realiza el envio del mensaje por el submit del formulario. 
     function handleSubmit(e) {
         e.preventDefault();
-        
-        var db = firebase.firestore()
 
-        console.log(uid);
+        fetch('http://localhost:8080/api/messages', {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            credentials: 'same-origin',
+            body: JSON.stringify({ uid: uid, message: value })
+        }).then(() => {
+            getMessages();
+        })
 
-        const date = new Date().getTime()
-        db.collection("users")
-          .doc(`${uid}`)
-          .collection("messages")
-          .doc(`${date}`)
-          .set({
-            id: date,
-            text: value
-          })
         setValue('');
     }
 
+    // render del html
     const page = (
         <div>
             { user ? <button onClick={()=>handleLogout()}>Logout</button> :
-            <button onClick={()=>handleLogin()}>Login</button>}
+            <button onClick={()=>LoginWithGoogle()}>Login</button>}
 
             { user && (
                 <div>
@@ -133,7 +136,7 @@ function LoginHelper(props) {
                     </form>
                     <ul>
                         {messages && Object.keys(messages).map(key => (
-                            <li key={key}>{messages[key].text}</li>
+                            <li key={key}>{messages[key].message}</li>
                         ))}
                     </ul>
                 </div>
@@ -144,6 +147,7 @@ function LoginHelper(props) {
     return ( error == null ? page : error)
 }
 
+
 // versión de getInitialProps para componentes con Hooks
 // no se que hace este código.
 LoginHelper.getInitialProps = async ({ query }) => {
@@ -151,5 +155,17 @@ LoginHelper.getInitialProps = async ({ query }) => {
     const messages = null;
     return { user, messages }
 };
+
+/* ------------ SPLIT LOGIC ---------------------------------------------------------------------------- */
+// hook que realiza la autenticación mediante Google
+function useHandleGoogleLogin(app) {
+    // retorna la promesa, y espera una función .then() posterior a la ejecución
+    // de la función para recibir el valor retornado por la promesa.
+    return app.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(function(result) {
+        return {name: result.user.displayName, uid: result.user.uid}
+    });
+}
+
 
 export default LoginHelper;
