@@ -93,6 +93,13 @@ function LoginHelper(props) {
         });
     }
 
+    function LoginWithFacebook() {
+        firebase.auth().signInWithPopup(new firebase.auth.FacebookAuthProvider())
+        .then(function(result) {
+            setUid(result.user.uid);
+        });
+    }
+
     // cierra la sesión del usuario y limpia el usuario y los parámetros.
     function handleLogout() {
         firebase.auth().signOut()
@@ -127,7 +134,10 @@ function LoginHelper(props) {
     const page = (
         <div>
             { user ? <button onClick={()=>handleLogout()}>Logout</button> :
-            <button onClick={()=>LoginWithGoogle()}>Login</button>}
+            <div>
+                <button onClick={()=>LoginWithGoogle()}>Login with Google</button>
+                <button onClick={()=>LoginWithFacebook()}>Login with Facebook</button>
+            </div>}
 
             { user && (
                 <div>
