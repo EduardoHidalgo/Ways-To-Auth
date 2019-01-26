@@ -17,21 +17,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Messages() {
+function Principal() {
   const classes = useStyles();
 
   return (
         <main className={classes.content}>
             <Paper className={classes.paper} elevation={1}>
                 <Typography variant="h5" component="h3">
-                    Home Page
+                    Menu principal
                 </Typography>
                 <Typography component="p">
-                    Esta es la sección de la página principal
+                    Este es el menú principal
                 </Typography>
             </Paper>
         </main>
   )
 }
 
-export default Messages;
+export default Principal;
