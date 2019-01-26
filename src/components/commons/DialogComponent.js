@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/styles';
 import { Typography, Modal, Paper, Avatar, Button } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
+// solución de hover del botón!! importante -> https://stackoverflow.com/questions/40937061/material-ui-v0-x-raisedbutton-on-hover-styles
+
 const useStyles = makeStyles(theme => ({
     paper: {
         position: 'absolute',
@@ -22,9 +24,25 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing.unit,
         backgroundColor: theme.palette.secondary.main
     },
-    button: {
+    googleButton: {
         marginTop: theme.spacing.unit * 3,
-        width: '100%'
+        width: '100%',
+        backgroundColor: '#d62d20',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#e26c62',
+            color: 'white'
+          }
+    },
+    facebookButton: {
+        marginTop: theme.spacing.unit * 3,
+        width: '100%',
+        backgroundColor: '#3b5998',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#8b9dc3',
+            color: 'white'
+          }
     }
 }));
 
@@ -60,8 +78,11 @@ function DialogComponent(props) {
                 <Typography component="h1" variant="h5">
                     Iniciar Sesión
                 </Typography>
-                <Button variant="contained" color="primary" className={classes.button} onClick={()=>handleLogin()}>
+                <Button variant="contained" className={classes.googleButton} onClick={()=>handleLogin()}>
                     INICIAR SESIÓN CON GOOGLE
+                </Button>
+                <Button variant="contained" className={classes.facebookButton} onClick={()=>handleLogin()}>
+                    INICIAR SESIÓN CON FACEBOOK
                 </Button>
             </Paper>
         </Modal>
