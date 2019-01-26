@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
-// import App from '../src/components/App';
+import App from '../src/components/App';
 import LoginHelper from '../src/components/LoginHelper';
 
 
 function Index(props) {
   return (
-        // <App />
-        <LoginHelper />
+        <App />
+        // <LoginHelper />
   )
 }
 
