@@ -5,8 +5,8 @@ import LoginHelper from '../src/components/LoginHelper';
 
 function Index(props) {
   return (
-        <App />
-        // <LoginHelper />
+        // <App />
+        <LoginHelper />
   )
 }
 
