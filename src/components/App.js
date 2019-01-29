@@ -7,6 +7,7 @@ import Messages from './Messages';
 import Principal from './Principal';
 import LoginHandlerDialog from './login/LoginHandlerDialog';
 import useFirebase from './firebase/useFirebase';
+import SnackbarComponent from './commons/SnackbarComponent';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,7 +37,7 @@ function App(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [login, setLogin] = useState(false);
-  const firebase = useFirebase();
+  const { firebase, error } = useFirebase();
 
   //abre y cierra el modal
   const handleDialog = (bool) => {
@@ -73,7 +74,7 @@ function App(props) {
           </Typography>
           {/* muestra el botó de login/logout según el estado de login */}
           { !login ? 
-            <Button color="inherit" onClick={()=>handleDialog(true)}>Login</Button> :
+            <Button color="inherit" onClick={()=>handleDialog(true)} disabled={error ? true : false}>Login</Button> :
             <Button color="inherit" onClick={handleLogout}>Logout</Button>
           }
         </Toolbar>
@@ -82,6 +83,9 @@ function App(props) {
         {/* muestra el contenido según el estado del login */}
         { login ? <Messages /> : <Principal />}
       </main>
+
+      {/* Muestra mensajes de alerta en caso de presentarse errores */}
+      { error ? <SnackbarComponent text={error} open={true}/> : null }
   </div>
   )
 }
