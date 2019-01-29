@@ -16,16 +16,13 @@ function useFirebase(props) {
 
     // en caso que ya exista un usuario logeado, directamente procede a
     // descargar el contenido.
-    if(user) {
-        getMessages();
-    }
+    if(user) getMessages()
 
     // core de la autenticación. promesa que revisa el estado de la autenticación en 
     // caso que detecte en la caché la sesión del usuario.
     firebase.auth().onAuthStateChanged((firebaseUser) => {
         //valida el token nuevamente en caso de que la sesión exista.
         if (firebaseUser) {
-            setUser(firebaseUser);
             return firebaseUser.getIdToken()
             .then((token) => {
                 return fetch('http://localhost:8080/api/login', {
@@ -39,8 +36,9 @@ function useFirebase(props) {
                 // getMessages();
             })
             .catch(function(error) {
-                console.log('error!');
+                console.log('error en la función "useFirebase".');
                 console.log(error);
+                setError(error);
             });
         } else {
             fetch('http://localhost:8080/api/logout', {
@@ -49,9 +47,11 @@ function useFirebase(props) {
             })
         }
     });
+
+    setError("error! plop, vas a morir.");
   }, []);
 
-  return firebase;
+  return { firebase, error };
 }
 
 // versión de getInitialProps para componentes con Hooks
