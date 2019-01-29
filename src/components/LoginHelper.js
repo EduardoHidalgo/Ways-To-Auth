@@ -82,11 +82,6 @@ function LoginHelper(props) {
     // realiza la autenticación del usuario por el método de Google. Exige
     // crear las credenciales del usuario y añadirlas a la db de auth.
     function LoginWithGoogle() {
-        // useLogin(App).then( function(result) {
-        //     setName(result.name);
-        //     setUid(result.uid);
-        // });
-
         firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
         .then(function(result) {
             setUid(result.user.uid);
@@ -157,7 +152,6 @@ function LoginHelper(props) {
     return ( error == null ? page : error)
 }
 
-
 // versión de getInitialProps para componentes con Hooks
 // no se que hace este código.
 LoginHelper.getInitialProps = async ({ query }) => {
@@ -176,6 +170,5 @@ function useHandleGoogleLogin(app) {
         return {name: result.user.displayName, uid: result.user.uid}
     });
 }
-
 
 export default LoginHelper;
