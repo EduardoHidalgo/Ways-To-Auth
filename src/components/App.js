@@ -1,11 +1,12 @@
 import '../bootstrap';
 import React, { useEffect, useState, Fragment } from "react";
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Typography, Button, IconButton, Paper } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import DialogComponent from "./commons/DialogComponent";
 import Messages from './Messages';
 import Principal from './Principal';
+import LoginHandlerDialog from './login/LoginHandlerDialog';
+import useFirebase from './firebase/useFirebase';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,11 +36,14 @@ function App(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [login, setLogin] = useState(false);
+  const firebase = useFirebase();
 
+  //abre y cierra el modal
   const handleDialog = (bool) => {
     setOpen(bool);
   }
 
+  // si el login fue correcto, setea login como true
   const handleLogin = (bool) => {
     setLogin(bool);
 
@@ -48,13 +52,17 @@ function App(props) {
     }
   }
 
+  // setea login como false
   const handleLogout = () => {
     setLogin(false);
   }
 
   return (
     <div className={classes.root}>
-      <DialogComponent open={open} handleDialog={handleDialog} handleLogin={handleLogin}/>
+
+      {/* Dialog que maneja el acceso de los usuarios */}
+      <LoginHandlerDialog open={open} handleDialog={handleDialog} handleLogin={handleLogin} firebase={firebase}/>
+
       <AppBar position="static">
         <Toolbar>
           <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
@@ -65,8 +73,8 @@ function App(props) {
           </Typography>
           {/* muestra el botó de login/logout según el estado de login */}
           { !login ? 
-          <Button color="inherit" onClick={()=>handleDialog(true)}>Login</Button> :
-          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+            <Button color="inherit" onClick={()=>handleDialog(true)}>Login</Button> :
+            <Button color="inherit" onClick={handleLogout}>Logout</Button>
           }
         </Toolbar>
       </AppBar>
