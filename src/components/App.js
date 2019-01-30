@@ -79,13 +79,14 @@ function App(props) {
           }
         </Toolbar>
       </AppBar>
+      
       <main className={classes.content}>
         {/* muestra el contenido según el estado del login */}
         { login ? <Messages /> : <Principal />}
       </main>
 
       {/* Muestra mensajes de alerta en caso de presentarse errores */}
-      { error ? <SnackbarComponent text={error} open={true}/> : null }
+      { error ? <SnackbarComponent text={error} open={true} type={"error"}/> : null }
   </div>
   )
 }
