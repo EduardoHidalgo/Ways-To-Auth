@@ -34,11 +34,11 @@ function useFirebase(props) {
             })
             .then(() => {
                 // getMessages();
+                return ("error! plop, vas a morir.")
             })
             .catch(function(error) {
                 console.log('error en la función "useFirebase".');
                 console.log(error);
-                setError(error);
             });
         } else {
             fetch('http://localhost:8080/api/logout', {
@@ -47,8 +47,6 @@ function useFirebase(props) {
             })
         }
     });
-
-    setError("error! plop, vas a morir.");
   }, []);
 
   return { firebase, error };
